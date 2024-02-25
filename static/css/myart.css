@@ -1,0 +1,19 @@
+td {
+    vertical-align: middle;
+}
+
+.btn-burgundy {
+    background-color: #800020; /* Бордовый цвет */
+    color: white; /* Белый цвет текста */
+}
+
+.btn-burgundy:hover {
+    background-color: #660000; /* Темно-бордовый цвет при наведении */
+}
+
+.final-buttons{
+    position: absolute;
+    right: 11px;
+    text-align: center;
+    display: flex;
+}

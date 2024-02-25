@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block container %}
+    <div class="table-responsive">
+        <table class="table table-striped mt-4 text-center">
+          <thead>
+            <tr>
+                <th class="col-1">IMG</th>
+              <th class="col-1">Name</th>
+              <th class="col-1">Poster</th>
+              <th class="col-1">Address</th>
+              <th class="col-2">Image</th>
+              <th class="col-1">Save</th>
+              <th class="col-1">Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <tr>
+                {% for center in centers %}
+                {% if center.image %}
+                    <td class="col-1">
+                            <img src="{{ center.image.url }}" alt="{{ center.name }}" style="height: 50px; width: 140px; object-fit: contain">
+                    </td>
+                        {% endif %}
+                <form method="POST" action="{% url 'CulturalCenter' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="edit">
+                    <input type="hidden" name="id" value="{{ center.id }}">
+                    <td class="col-1"><input type="text" class="text-center" name="name" value="{{ center.name }}"></td>
+                    <td class="col-1"><input type="text" class="text-center" name="poster" value="{{ center.poster }}"></td>
+                    <td class="col-1"><input type="text" class="text-center" name="address" value="{{ center.address }}"></td>
+                    <td class="col-2">
+                        <input type="file" class="text-center" name="image"></td>
+                    <td class="col-1">
+                        <button class="btn btn-success" type="submit">Сохранить</button>
+                    </td>
+                </form>
+                <td class="class=col-1 ps-lg-0">
+                    <form method="POST" action="{% url 'CulturalCenter' %}" >
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="id" value="{{ center.id }}">
+                        <button class="btn btn-danger" type="submit">Удалить</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            <tr>
+            <form method="POST" action="{% url 'CulturalCenter' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <td class="col-1"></td>
+                <td class="col-1"><input type="text" class="text-center" name="name"></td>
+                <td class="col-1"><input type="text" class="text-center" name="poster"></td>
+                <td class="col-1"><input type="text" class="text-center" name="address"></td>
+                <td class="col-2"><input type="file" class="text-center" name="image"></td>
+                <td class="col-1">
+                    <input type="hidden" name="action" value="add">
+                    <button class="btn btn-primary" type="submit">Добавить</button>
+                </td>
+                <td class="col-1"></td>
+            </form>
+            </tr>
+          </tbody>
+        </table>
+    </div>
+        <div class="final-buttons">
+            <div id="save-all-button" class="me-lg-2">
+                <form method="POST" action="{% url 'CulturalCenter' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="save_all">
+                    <button class="btn btn-success " style="width: 12em" type="submit">Сохранить все</button>
+                </form>
+            </div>
+            <div id="delete-all-button">
+                <form method="POST" action="{% url 'CulturalCenter' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete_all">
+                    <button class="btn btn-burgundy " style="width: 12em" type="submit">Удалить все</button>
+                </form>
+            </div>
+    </div>
+{% endblock %}

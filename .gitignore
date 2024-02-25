@@ -1,0 +1,8 @@
+.idea/
+MyArt/__pycache__/
+myartapp/__pycache__/
+myartapp/migrations/__pycache__/
+staticfiles/admin/
+staticfiles/rest_framework/
+venv/Lib/site-packages/
+venv/
