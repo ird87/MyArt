@@ -1,83 +1,111 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block container %}
     <div class="table-responsive">
         <table class="table table-striped mt-4 text-center">
-          <thead>
-            <tr>
-                <th class="col-1">IMG</th>
-              <th class="col-1">Name</th>
-              <th class="col-1">Poster</th>
-              <th class="col-1">Address</th>
-              <th class="col-2">Image</th>
-              <th class="col-1">Save</th>
-              <th class="col-1">Delete</th>
-            </tr>
-          </thead>
-          <tbody>
-
-            <tr>
+            <thead>
+                <tr>
+                    <th class="col-2">IMG</th>
+                    <th class="col-2">Name</th>
+                     <th class="col-2">Repertoire URL</th>
+                    <th class="col-2">Poster URL</th>
+                    <th class="col-2">Address</th>
+                <th class="col-1">Delete</th>
+                </tr>
+            </thead>
+            <tbody>
                 {% for center in centers %}
-                {% if center.image %}
-                    <td class="col-1">
-                            <img src="{{ center.image.url }}" alt="{{ center.name }}" style="height: 50px; width: 140px; object-fit: contain">
-                    </td>
-                        {% endif %}
-                <form method="POST" action="{% url 'CulturalCenter' %}" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="edit">
-                    <input type="hidden" name="id" value="{{ center.id }}">
-                    <td class="col-1"><input type="text" class="text-center" name="name" value="{{ center.name }}"></td>
-                    <td class="col-1"><input type="text" class="text-center" name="poster" value="{{ center.poster }}"></td>
-                    <td class="col-1"><input type="text" class="text-center" name="address" value="{{ center.address }}"></td>
+                <tr class="center-row" data-id="{{ center.id }}">
                     <td class="col-2">
-                        <input type="file" class="text-center" name="image"></td>
-                    <td class="col-1">
-                        <button class="btn btn-success" type="submit">Сохранить</button>
+                        {% if center.image_url %}
+                            <img src="{{ center.image_url }}" alt="{{ center.name }}" style="height: 50px; width: 140px; object-fit: contain">
+                        {% endif %}
                     </td>
-                </form>
-                <td class="class=col-1 ps-lg-0">
-                    <form method="POST" action="{% url 'CulturalCenter' %}" >
-                        {% csrf_token %}
-                        <input type="hidden" name="action" value="delete">
-                        <input type="hidden" name="id" value="{{ center.id }}">
-                        <button class="btn btn-danger" type="submit">Удалить</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-            <tr>
-            <form method="POST" action="{% url 'CulturalCenter' %}" enctype="multipart/form-data">
-                {% csrf_token %}
-                <td class="col-1"></td>
-                <td class="col-1"><input type="text" class="text-center" name="name"></td>
-                <td class="col-1"><input type="text" class="text-center" name="poster"></td>
-                <td class="col-1"><input type="text" class="text-center" name="address"></td>
-                <td class="col-2"><input type="file" class="text-center" name="image"></td>
+                    <td class="col-2">{{ center.name }}</td>
+                    <td class="col-2">{{ center.repertoire_url }}</td>
+                    <td class="col-2">{{ center.poster_url }}</td>
+                    <td class="col-2">{{ center.address }}</td>
+                    <td class="col-1">
+                        <form method="POST" enctype="multipart/form-data" %}" >
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="delete">
+                            <input type="hidden" name="id" value="{{ center.id }}">
+                            <button class="btn btn-danger w-100" type="submit">Удалить</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                <td class="col-2"></td>
+                <td class="col-2"></td>
+                <td class="col-2"></td>
+                <td class="col-2"></td>
+                <td class="col-2"></td>
                 <td class="col-1">
-                    <input type="hidden" name="action" value="add">
-                    <button class="btn btn-primary" type="submit">Добавить</button>
+                    <button id="addButton" class="btn btn-primary w-100" type="button" data-bs-toggle="modal" data-bs-target="#addModal">Добавить</button>
                 </td>
-                <td class="col-1"></td>
-            </form>
-            </tr>
-          </tbody>
+            </tbody>
         </table>
-    </div>
-        <div class="final-buttons">
-            <div id="save-all-button" class="me-lg-2">
-                <form method="POST" action="{% url 'CulturalCenter' %}">
+
+        <!-- Modal -->
+        <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="addModalLabel">Добавить новый центр</h5>
+                <button type="button" class="close text-dark" data-bs-dismiss="modal" aria-label="Close" style="border:none; position: absolute; right: 15px;    top: 0px;
+    background-color: transparent;">
+                    <span aria-hidden="true" class="h1">×</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form id="form"  method="POST" action="{% url 'CulturalCenters' %}" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <input type="hidden" name="action" value="save_all">
-                    <button class="btn btn-success " style="width: 12em" type="submit">Сохранить все</button>
+                    <input type="hidden" name="action" value="add">
+                    <input type="hidden" id="centerId" name="id" value="0">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" class="form-control" id="name" name="name">
+                    </div>
+                    <div class="form-group mt-xl-2">
+                        <label for="repertoire_url">Repertoire URL</label>
+                        <input type="text" class="form-control" id="repertoire_url" name="repertoire_url">
+                    </div>
+                    <div class="form-group mt-xl-2">
+                        <label for="poster_url">Poster URL</label>
+                        <input type="text" class="form-control" id="poster_url" name="poster_url">
+                    </div>
+                    <div class="form-group mt-xl-2">
+                        <label for="address">Address</label>
+                        <input type="text" class="form-control" id="address" name="address">
+                    </div>
+                    <div class="form-group mt-xl-2">
+                        <label for="image_url">Image URL</label>
+                        <input type="text" class="form-control" id="image_url" name="image_url">
+                    </div>
                 </form>
+              </div>
+             <div class="modal-footer">
+                <button id="saveButton" type="submit" class="btn btn-primary">Сохранить изменения</button>
             </div>
-            <div id="delete-all-button">
-                <form method="POST" action="{% url 'CulturalCenter' %}">
-                    {% csrf_token %}
-                    <input type="hidden" name="action" value="delete_all">
-                    <button class="btn btn-burgundy " style="width: 12em" type="submit">Удалить все</button>
-                </form>
             </div>
+          </div>
+        </div>
+
+
+
     </div>
+    <div class="final-buttons">
+        <div id="delete-all-button">
+            <form method="POST" action="{% url 'CulturalCenters' %}">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="delete_all">
+                <button class="btn btn-burgundy " style="width: 12em" type="submit">Удалить все</button>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/cc.js' %}"></script>
 {% endblock %}

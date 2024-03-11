@@ -4,9 +4,40 @@ from .models import CulturalCenter
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
+from .serializers import CulturalCenterSerializer
 
 
-class CulturalCenterAPI(APIView):
+class CulturalCenterDetailAPI(APIView):
+
+    def get(self, request, id=None, format=None):
+        if id is not None and id != 0:
+            center = CulturalCenter.objects.get(id=id)
+            serializer = CulturalCenterSerializer(center)
+            return Response(serializer.data)
+        else:
+            return Response({'error': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def post(self, request, id=None, format=None):
+        if id is not None:
+            if id == 0:
+                # Добавление нового центра
+                serializer = CulturalCenterSerializer(data=request.data)
+            else:
+                # Обновление существующего центра
+                center = CulturalCenter.objects.get(id=id)
+                serializer = CulturalCenterSerializer(center, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'error': 'Invalid request'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CulturalCentersAPI(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = "cc.html"
 
@@ -18,24 +49,6 @@ class CulturalCenterAPI(APIView):
 
     def post(self, request, format=None):
         action = request.data.get('action')
-        id = request.data.get('id')
-        if action == 'add':
-            form = CulturalCenterForm(request.POST, request.FILES)
-            if form.is_valid():
-                form.save()
-        elif action == 'edit':
-            instance = CulturalCenter.objects.get(id=id)
-            form = CulturalCenterForm(request.POST, request.FILES, instance=instance)
-            if form.is_valid():
-                form.save()
-        elif action == 'delete':
-            instance = CulturalCenter.objects.get(id=id)
-            instance.delete()
-        elif action == 'delete_all':
+        if action == 'delete_all':
             CulturalCenter.objects.all().delete()
-        elif action == 'save_all':
-            for center in CulturalCenter.objects.all():
-                form = CulturalCenterForm(request.POST, request.FILES, instance=center)
-                if form.is_valid():
-                    form.save()
         return Response()
