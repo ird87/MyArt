@@ -1,0 +1,22 @@
+{% load static %}
+
+<!-- Модальное окно -->
+<div class="modal" tabindex="-1" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+                <h5 class="modal-title" id="addModalLabel">Добавить новый центр</h5>
+                <button type="button" class="close text-dark" data-bs-dismiss="modal" aria-label="Close" style="border:none; position: absolute; right: 15px;    top: 0px;
+    background-color: transparent;">
+                    <span aria-hidden="true" class="h1">×</span>
+                </button>
+              </div>
+      <div class="modal-body">
+        <!-- iframe для отображения содержимого страницы -->
+        <iframe id="modal-iframe" src="" width="100%" height="500px"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'js/modal.js' %}"></script>
