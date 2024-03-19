@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from .serializers import CulturalCenterSerializer
+from django.shortcuts import get_object_or_404
 
 
 class CulturalCenterDetailAPI(APIView):
@@ -17,7 +18,7 @@ class CulturalCenterDetailAPI(APIView):
     def get(self, request, id=None, format=None):
         center = None
         if id is not None and id != 0:
-            center = CulturalCenter.objects.get(id=id)
+            center = get_object_or_404(CulturalCenter, id=id)
         form = CulturalCenterForm(instance=center)
         return Response({'form': form, 'center': center})
 
@@ -26,7 +27,7 @@ class CulturalCenterDetailAPI(APIView):
         if id is not None:
             if action == 'delete':
                 # Удаление существующего центра
-                center = CulturalCenter.objects.get(id=id)
+                center = get_object_or_404(CulturalCenter, id=id)
                 center.delete()
                 return redirect('CulturalCenters')
             else:
@@ -35,7 +36,7 @@ class CulturalCenterDetailAPI(APIView):
                     form = CulturalCenterForm(request.POST)
                 else:
                     # Обновление существующего центра
-                    center = CulturalCenter.objects.get(id=id)
+                    center = get_object_or_404(CulturalCenter, id=id)
                     form = CulturalCenterForm(request.POST, instance=center)
                 if form.is_valid():
                     form.save()
@@ -55,7 +56,7 @@ class CulturalCentersAPI(APIView):
         action = request.data.get('action')
         id = int(request.data.get('id'))
         if action == 'delete':
-            center = CulturalCenter.objects.get(id=id)
+            center = get_object_or_404(CulturalCenter, id=id)
             center.delete()
         if action == 'delete_all':
             CulturalCenter.objects.all().delete()

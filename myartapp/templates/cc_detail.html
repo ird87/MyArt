@@ -5,7 +5,7 @@
     <div class="modal-body pt-3">
         <form id="form" method="POST" action="{% url 'CulturalCenterDetail' form.instance.id|default:'0' %}" enctype="multipart/form-data">
             {% csrf_token %}
-            <input type="hidden" name="action" value="add">
+            <input type="hidden" name="action" id="action" value="add">
             <input type="hidden" id="centerId" name="id" value="{% if center %}{{ center.id }}{% else %}0{% endif %}">
             <div class="form-group">
                 <label for="name">Name</label>
@@ -27,20 +27,19 @@
                 <label for="image_url">Image URL</label>
                 <input type="text" class="form-control" id="image_url" name="image_url" value="{% if center %}{{ center.image_url }}{% endif %}">
             </div>
-
-      <div class="row ">
-    <div class="col-6 col-md-6 mt-3">
-        {% if center %}
-        <button id="deleteButton" type="submit" class="btn btn-danger w-100" formaction="{% url 'CulturalCenterDetail' form.instance.id|default:'0' %}?action=delete" value="delete">Удалить</button>
-        {% endif %}
-    </div>
-    <div class="col-6 col-md-6 mt-3">
-        <button id="saveButton" type="submit" class="btn btn-primary w-100">Сохранить</button>
-    </div>
-</div>
-
         </form>
+        <div class="row ">
+            <div class="col-6 col-md-6 mt-3">
+                {% if center %}
+                <button id="deleteButton" type="button" class="btn btn-danger w-100">Удалить</button>
+                {% endif %}
+            </div>
+            <div class="col-6 col-md-6 mt-3">
+                <button id="saveButton" type="button" class="btn btn-primary w-100">Сохранить</button>
+            </div>
+        </div>
     </div>
 {% endblock %}
 {% block scripts %}
+    <script src="{% static 'js/cc_detail.js' %}"></script>
 {% endblock %}
